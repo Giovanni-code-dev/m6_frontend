@@ -84,3 +84,6 @@ export const fetchLoggedUser = async () => {
   if (!res.ok) throw new Error("Token non valido o scaduto")
   return await res.json()
 }
+
+
+

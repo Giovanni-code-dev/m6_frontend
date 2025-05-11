@@ -27,10 +27,9 @@ const ProtectedRoute = ({ children }) => {
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (isAuthenticated && location.pathname === '/login') {
-    return <Navigate to="/" replace />;
-  } 
-  
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+
   return children;
 };
 
