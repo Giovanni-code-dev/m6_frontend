@@ -7,6 +7,7 @@ import { convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import { useNavigate } from "react-router-dom";
 
+
 // Importa le funzioni dal file api.js
 import { fetchAuthors, postData } from "../../utils/api";
 
@@ -16,7 +17,11 @@ const NewBlogPost = () => {
   const [category, setCategory] = useState("");
   const [authors, setAuthors] = useState([]);
   const [authorId, setAuthorId] = useState("");
+  const [coverImage, setCoverImage] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+
   const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchAuthors()
@@ -28,42 +33,72 @@ const NewBlogPost = () => {
     setText(draftToHtml(value));
   }, []);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCoverImage(file);
+      setCoverPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadCoverImage = async (file, postId) => {
+    const formData = new FormData();
+    formData.append("cover", file);
+
+    const res = await fetch(`http://localhost:3001/blog/${postId}/cover`, {
+      method: "PATCH",
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("Errore nell'upload della cover");
+    return await res.json(); // post aggiornato con URL della cover
+  };
+
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!authorId) return alert("Seleziona un autore!");
     if (!category) return alert("Seleziona una categoria!");
+    if (!coverImage) return alert("Carica una cover!");
 
     const newPost = {
       title,
       category,
       content: text,
       author: authorId,
-      cover: "https://picsum.photos/1000/300",
       readTime: {
         value: 7,
         unit: "minuti",
       },
     };
 
-    console.log("POST INVIATO AL SERVER:", newPost);
-
     try {
-      const result = await postData(newPost);
-      if (result) {
-        alert("Post creato con successo!");
-        // reset del form
-        setTitle("");
-        setCategory("");
-        setAuthorId("");
-        setText("");
-        // redirect
-        navigate("/");
-      }
+      // Step 1: crea il post senza cover
+      const createdPost = await postData(newPost);
+
+      // Step 2: carica la cover
+      const updatedPost = await uploadCoverImage(coverImage, createdPost._id);
+
+      console.log("Post aggiornato con cover:", updatedPost);
+
+      alert("Post creato con successo!");
+      // reset del form
+      setTitle("");
+      setCategory("");
+      setAuthorId("");
+      setText("");
+      setCoverImage(null);
+      setCoverPreview(null);
+      navigate("/");
     } catch (err) {
       console.error("Errore nel submit:", err);
+      alert("Errore nella creazione del post");
     }
   };
+
+
 
   return (
     <Container className="new-blog-container">
@@ -95,7 +130,7 @@ const NewBlogPost = () => {
             <option value="categoria4">Categoria 4</option>
             <option value="categoria5">Categoria 5</option>
 
-          
+
 
           </Form.Control>
         </Form.Group>
@@ -126,6 +161,24 @@ const NewBlogPost = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
+        </Form.Group>
+
+        <Form.Group controlId="blog-cover" className="mt-3">
+          <Form.Label>Immagine di Copertina</Form.Label>
+          <Form.Control
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          {coverPreview && (
+            <div className="mt-3">
+              <img
+                src={coverPreview}
+                alt="Anteprima Copertina"
+                style={{ width: "100%", maxHeight: "300px", objectFit: "cover" }}
+              />
+            </div>
+          )}
         </Form.Group>
 
         <Form.Group className="d-flex mt-3 justify-content-end">
