@@ -2,6 +2,8 @@ import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { loginUser } from "../../utils/api"
 
+import GoogleLoginButton from './GoogleLoginButton';
+
 const LoginForm = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -13,11 +15,20 @@ const LoginForm = () => {
     e.preventDefault()
     try {
       await loginUser(email, password)
-      navigate("/") // o "/home", dove vuoi mandare l'utente
+      navigate("/")
     } catch (err) {
       setError(err.message)
     }
   }
+
+  const handleLoginSuccess = (token) => {
+    navigate("/")
+  };
+
+  const handleLoginError = (msg) => {
+    console.error("Login error:", msg);
+    setError(msg);
+  };
 
   return (
     <div className="container mt-5">
@@ -46,10 +57,18 @@ const LoginForm = () => {
             required
           />
         </div>
-
-        <button type="submit" className="btn btn-primary">
+        <div className="d-flex align-items-center">
+        <button type="submit" className="btn btn-primary me-2">
           Accedi
         </button>
+
+        <GoogleLoginButton
+          onSuccess={handleLoginSuccess}
+          onError={handleLoginError}
+        />
+        </div>
+
+
       </form>
     </div>
   )
