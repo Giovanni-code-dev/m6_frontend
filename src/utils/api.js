@@ -41,7 +41,6 @@ export const fetchSinglePost = async (id) => {
   return await res.json();
 };
 
-
 // LOGIN
 export const loginUser = async (email, password) => {
   const res = await fetch("http://localhost:3001/login", {
@@ -56,9 +55,18 @@ export const loginUser = async (email, password) => {
   }
 
   const { accessToken } = await res.json()
-  localStorage.setItem("token", accessToken) // ✅ salva il token
+  localStorage.setItem("token", accessToken) // salva il token
   return accessToken
 }
+
+// LOGOUT
+  export const logoutUser = () => {
+    localStorage.removeItem("token")
+
+  } 
+
+
+
 
 // REGISTRAZIONE
 export const registerUser = async (userData) => {
@@ -85,5 +93,25 @@ export const fetchLoggedUser = async () => {
   return await res.json()
 }
 
+// LOGIN WITH GOOGLE
+export const loginWithGoogle = async (idToken) => {
+  const res = await fetch("http://localhost:3001/login/google", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idToken }),
+  });
 
+  const json = await res.json();
+  //console.log("Backend response JSON:", json);
+
+  if (!res.ok) {
+    throw new Error(json.message || "Google login failed");
+  }
+
+  const { accessToken } = json;
+  //console.log("Extracted accessToken:", accessToken);
+
+  localStorage.setItem("token", accessToken);
+  return accessToken;
+};
 
