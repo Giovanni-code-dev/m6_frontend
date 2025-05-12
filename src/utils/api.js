@@ -1,6 +1,6 @@
 // src/utils/api.js
 export const fetchPosts = async (authorId = '', title = '') => {
-  let endpoint = 'http://localhost:3001/blog?';
+  let endpoint = process.env.REACT_APP_APIURL + '/blog?';
 
   if (authorId) endpoint += `author=${authorId}&`;
   if (title) endpoint += `title=${encodeURIComponent(title)}`;
@@ -12,7 +12,7 @@ export const fetchPosts = async (authorId = '', title = '') => {
 
 export const fetchAuthors = async () => {
   const token = localStorage.getItem("token"); // recupera il token salvato
-  const res = await fetch("http://localhost:3001/authors", {
+  const res = await fetch(process.env.REACT_APP_APIURL + "/authors", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`, // aggiunge il token all'header
@@ -25,7 +25,7 @@ export const fetchAuthors = async () => {
 };
 
 export const postData = async (post) => {
-  const res = await fetch("http://localhost:3001/blog", {
+  const res = await fetch(process.env.REACT_APP_APIURL + "/blog", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(post),
@@ -36,14 +36,14 @@ export const postData = async (post) => {
 };
 
 export const fetchSinglePost = async (id) => {
-  const res = await fetch(`http://localhost:3001/blog/${id}`);
+  const res = await fetch(process.env.REACT_APP_APIURL + `/blog/${id}`);
   if (!res.ok) throw new Error("Post non trovato");
   return await res.json();
 };
 
 // LOGIN
 export const loginUser = async (email, password) => {
-  const res = await fetch("http://localhost:3001/login", {
+  const res = await fetch(process.env.REACT_APP_APIURL + "/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -70,7 +70,7 @@ export const loginUser = async (email, password) => {
 
 // REGISTRAZIONE
 export const registerUser = async (userData) => {
-  const res = await fetch("http://localhost:3001/authors", {
+  const res = await fetch(process.env.REACT_APP_APIURL + "/authors", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
@@ -85,7 +85,7 @@ export const fetchLoggedUser = async () => {
   const token = localStorage.getItem("token")
   if (!token) throw new Error("Token mancante")
 
-  const res = await fetch("http://localhost:3001/login/me", {
+  const res = await fetch(process.env.REACT_APP_APIURL + "/login/me", {
     headers: { Authorization: `Bearer ${token}` },
   })
 
@@ -95,7 +95,7 @@ export const fetchLoggedUser = async () => {
 
 // LOGIN WITH GOOGLE
 export const loginWithGoogle = async (idToken) => {
-  const res = await fetch("http://localhost:3001/login/google", {
+  const res = await fetch(process.env.REACT_APP_APIURL + "/login/google", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ idToken }),
@@ -118,7 +118,7 @@ export const loginWithGoogle = async (idToken) => {
 // comments
 export const fetchPostComments = async (postId, page = 1, limit = 5) => {
   const token = localStorage.getItem("token");
-  const res = await fetch(`http://localhost:3001/blog/${postId}/comments?page=${page}&limit=${limit}`, {
+  const res = await fetch(process.env.REACT_APP_APIURL + `/blog/${postId}/comments?page=${page}&limit=${limit}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"

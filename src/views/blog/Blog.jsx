@@ -13,7 +13,7 @@ const Blog = props => {
   const navigate = useNavigate();
 
   async function getPost(id) {
-    return await fetch('http://localhost:3001/blog/' + id)
+    return await fetch(process.env.REACT_APP_APIURL + '/blog/' + id)
       .then(res => {
         console.log(res)
         if (res.status != 200) {
@@ -44,7 +44,7 @@ const Blog = props => {
 
       {!loading && <div className="blog-details-root">
         <Container>
-          <Image className="blog-details-cover" src={blog.cover} fluid />
+          <Image className="blog-blog-details-cover w-25 rounded mx-auto d-block shadow-sm border-cover" src={blog.cover} fluid />
           <h1 className="blog-details-title">{blog.title}</h1>
 
           <div className="blog-details-container">

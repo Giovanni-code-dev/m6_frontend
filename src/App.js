@@ -17,9 +17,8 @@ function App() {
       <Router>
         <NavBar />
         <Routes>
-          <Route path="/" exact element={<Home />} />
-          <Route path="/blog/:id" element={<Blog />} />
-          
+          <Route path="/" exact element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/blog/:id" element={<ProtectedRoute><Blog /></ProtectedRoute>} />
           <Route path="/new" element={<ProtectedRoute><NewBlogPost /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

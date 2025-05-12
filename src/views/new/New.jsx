@@ -45,7 +45,7 @@ const NewBlogPost = () => {
     const formData = new FormData();
     formData.append("cover", file);
 
-    const res = await fetch(`http://localhost:3001/blog/${postId}/cover`, {
+    const res = await fetch(process.env.REACT_APP_APIURL + `/blog/${postId}/cover`, {
       method: "PATCH",
       body: formData,
     });
