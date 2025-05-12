@@ -19,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="/blog/:id" element={<Blog />} />
+          
           <Route path="/new" element={<ProtectedRoute><NewBlogPost /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

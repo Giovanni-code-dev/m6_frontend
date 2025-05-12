@@ -115,3 +115,19 @@ export const loginWithGoogle = async (idToken) => {
   return accessToken;
 };
 
+// comments
+export const fetchPostComments = async (postId, page = 1, limit = 5) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`http://localhost:3001/blog/${postId}/comments?page=${page}&limit=${limit}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!res.ok) throw new Error("Errore nel recupero dei commenti");
+  const data = await res.json();
+  return data.comments;
+};
+
+
